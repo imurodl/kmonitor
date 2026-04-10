@@ -1,5 +1,5 @@
 import { Entity, BillboardGraphics } from "resium";
-import { Cartesian3, Color, VerticalOrigin } from "cesium";
+import { Cartesian3, VerticalOrigin } from "cesium";
 import type { DisasterAlert } from "../../../api/client";
 
 // Region center coordinates for placing alert markers
@@ -21,13 +21,6 @@ const REGION_COORDS: Record<string, [number, number]> = {
   경상북도: [36.249, 128.8714],
   경상남도: [35.4606, 128.2132],
   제주특별자치도: [33.4996, 126.5312],
-};
-
-const SEVERITY_COLORS: Record<string, Color> = {
-  CRITICAL: Color.RED,
-  WARNING: Color.ORANGE,
-  WATCH: Color.fromCssColorString("#3b82f6"),
-  INFO: Color.GRAY,
 };
 
 function createWarningIcon(severity: string): string {

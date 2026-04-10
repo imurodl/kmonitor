@@ -1,5 +1,5 @@
 import { Viewer, CameraFlyTo } from "resium";
-import { Cartesian3, Ion, createWorldTerrainAsync } from "cesium";
+import { Cartesian3, Ion } from "cesium";
 import { useLayerStore } from "../../stores/layerStore";
 import {
   useEarthquakes,
