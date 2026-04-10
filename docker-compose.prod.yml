@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: kmonitor
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-kmonitor_prod_2026}
+      POSTGRES_DB: kmonitor
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kmonitor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: kmonitor
+      DB_USER: kmonitor
+      DB_PASS: ${DB_PASSWORD:-kmonitor_prod_2026}
+      DATA_GO_KR_KEY: ${DATA_GO_KR_KEY:-}
+      FIRMS_MAP_KEY: ${FIRMS_MAP_KEY:-}
+      SERVER_PORT: 8080
+    ports:
+      - "8085:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
