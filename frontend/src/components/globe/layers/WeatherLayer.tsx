@@ -1,5 +1,5 @@
 import { Entity, LabelGraphics, PointGraphics } from "resium";
-import { Cartesian3, Color, NearFarScalar, VerticalOrigin } from "cesium";
+import { Cartesian2, Cartesian3, Color, NearFarScalar, VerticalOrigin } from "cesium";
 import type { WeatherObservation } from "../../../api/client";
 
 const CONDITION_COLORS: Record<string, Color> = {
@@ -10,6 +10,8 @@ const CONDITION_COLORS: Record<string, Color> = {
   흐림: Color.GRAY,
   구름많음: Color.LIGHTGRAY,
 };
+
+const LABEL_OFFSET = new Cartesian2(0, -12);
 
 interface Props {
   data: WeatherObservation[];
@@ -49,9 +51,9 @@ export function WeatherLayer({ data }: Props) {
               fillColor={Color.WHITE}
               outlineColor={Color.BLACK}
               outlineWidth={2}
-              style={2} // FILL_AND_OUTLINE
+              style={2}
               verticalOrigin={VerticalOrigin.BOTTOM}
-              pixelOffset={{ x: 0, y: -12 } as any}
+              pixelOffset={LABEL_OFFSET}
               scaleByDistance={new NearFarScalar(1e4, 1.0, 1e7, 0.3)}
             />
           </Entity>
