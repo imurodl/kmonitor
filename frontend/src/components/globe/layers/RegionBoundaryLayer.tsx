@@ -5,6 +5,7 @@ import {
   Color,
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
+  Cartesian2,
   type Viewer as CesiumViewerType,
   type Entity as CesiumEntity,
   Cartesian3,
@@ -74,7 +75,7 @@ export function RegionBoundaryLayer() {
 
     // Click handler for region selection
     const handler = new ScreenSpaceEventHandler(cesiumViewer.scene.canvas);
-    handler.setInputAction((click: { position: { x: number; y: number } }) => {
+    handler.setInputAction((click: { position: Cartesian2 }) => {
       const picked = cesiumViewer.scene.pick(click.position);
       if (picked?.id && dsRef.current?.entities.contains(picked.id)) {
         const regionId = picked.id.name;
