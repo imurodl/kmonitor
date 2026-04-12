@@ -4,14 +4,16 @@ import {
   AlertTriangle,
   Flame,
   Cloud,
-  Radio,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { useLayerStore } from "../../stores/layerStore";
 import { useDashboardSummary, useDisasterAlerts } from "../../api/hooks";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { RegionSelector } from "./RegionSelector";
 
 const LAYER_CONFIG = [
   { key: "earthquake" as const, label: "지진", icon: Activity, color: "#ef4444" },
@@ -37,27 +39,29 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
-  const { layers, toggleLayer } = useLayerStore();
+  const { layers, toggleLayer, setAllLayers } = useLayerStore();
   const summary = useDashboardSummary();
   const disasters = useDisasterAlerts();
+  const allOn = Object.values(layers).every(Boolean);
 
   if (collapsed) {
     return (
-      <div className="w-14 h-full bg-bg-surface border-r border-border-default flex flex-col items-center py-4 gap-1 shrink-0">
+      <div className="w-12 h-full bg-bg-surface border-r border-border-default flex flex-col items-center py-3 gap-0.5 shrink-0">
         <button
           onClick={onToggle}
-          className="p-2 rounded-lg text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors mb-4"
+          className="p-2 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors mb-3"
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={14} />
         </button>
         {LAYER_CONFIG.map(({ key, icon: Icon, color }) => (
           <button
             key={key}
             onClick={() => toggleLayer(key)}
-            className="p-2 rounded-lg transition-colors"
+            className="p-2 rounded-md transition-colors hover:bg-bg-elevated"
             style={{ color: layers[key] ? color : "#4b5563" }}
+            title={LAYER_CONFIG.find(l => l.key === key)?.label}
           >
-            <Icon size={18} />
+            <Icon size={16} />
           </button>
         ))}
       </div>
@@ -66,50 +70,48 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <div className="w-80 h-full bg-bg-surface border-r border-border-default flex flex-col overflow-hidden shrink-0">
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-border-default flex items-center justify-between">
-        <div>
-          <h1 className="text-base font-semibold text-text-primary flex items-center gap-2">
-            <Radio size={18} className="text-accent-blue" />
-            K-Monitor
-          </h1>
-          <p className="text-xs text-text-muted mt-0.5">
-            한국 재난 상황 모니터링
-          </p>
-        </div>
-        <button
-          onClick={onToggle}
-          className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
-        >
-          <ChevronLeft size={16} />
-        </button>
-      </div>
-
       {/* Layer Toggles */}
-      <div className="px-4 py-3 border-b border-border-default">
-        <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
-          레이어
-        </h2>
-        <div className="space-y-0.5">
+      <div className="px-3 py-3 border-b border-border-default">
+        <div className="flex items-center justify-between mb-2 px-1">
+          <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider">
+            레이어
+          </h2>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setAllLayers(!allOn)}
+              className="p-1 rounded text-text-muted hover:text-text-primary transition-colors"
+              title={allOn ? "모두 끄기" : "모두 켜기"}
+            >
+              {allOn ? <EyeOff size={12} /> : <Eye size={12} />}
+            </button>
+            <button
+              onClick={onToggle}
+              className="p-1 rounded text-text-muted hover:text-text-primary transition-colors"
+            >
+              <ChevronLeft size={14} />
+            </button>
+          </div>
+        </div>
+        <div className="space-y-px">
           {LAYER_CONFIG.map(({ key, label, icon: Icon, color }) => (
             <button
               key={key}
               onClick={() => toggleLayer(key)}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-all ${
+              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded text-[13px] transition-all ${
                 layers[key]
                   ? "text-text-primary"
                   : "text-text-muted hover:text-text-secondary hover:bg-bg-elevated/50"
               }`}
               style={
                 layers[key]
-                  ? { backgroundColor: `${color}10`, borderLeft: `2px solid ${color}` }
+                  ? { backgroundColor: `${color}0d`, borderLeft: `2px solid ${color}` }
                   : { borderLeft: "2px solid transparent" }
               }
             >
-              <Icon size={15} style={{ color: layers[key] ? color : undefined }} />
-              <span className="text-[13px]">{label}</span>
+              <Icon size={14} style={{ color: layers[key] ? color : undefined }} />
+              <span>{label}</span>
               <div
-                className="ml-auto w-1.5 h-1.5 rounded-full transition-colors"
+                className="ml-auto w-1.5 h-1.5 rounded-full"
                 style={{ backgroundColor: layers[key] ? color : "#374151" }}
               />
             </button>
@@ -117,39 +119,46 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </div>
       </div>
 
+      {/* Region Selector */}
+      <RegionSelector />
+
       {/* Stats */}
-      <div className="px-4 py-3 border-b border-border-default">
+      <div className="px-3 py-3 border-b border-border-default">
         <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
           현황
         </h2>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5">
           {summary.isLoading ? (
             <>
-              <Skeleton className="h-16" />
-              <Skeleton className="h-16" />
-              <Skeleton className="h-16" />
-              <Skeleton className="h-16" />
+              <Skeleton className="h-14" />
+              <Skeleton className="h-14" />
+              <Skeleton className="h-14" />
+              <Skeleton className="h-14" />
             </>
           ) : summary.data ? (
             <>
               <StatCard label="지진 (24h)" value={summary.data.earthquakes.count24h} color="#ef4444" />
               <StatCard label="재난문자" value={summary.data.disasters.activeAlerts} color="#f59e0b" />
-              <StatCard label="대기질 측정소" value={summary.data.airQuality.stationsReporting} color="#22c55e" />
-              <StatCard label="산불 감지" value={summary.data.wildfires.activeHotspots} color="#ff6b35" />
+              <StatCard label="대기질" value={summary.data.airQuality.stationsReporting} color="#22c55e" />
+              <StatCard label="산불" value={summary.data.wildfires.activeHotspots} color="#ff6b35" />
             </>
-          ) : null}
+          ) : (
+            <div className="col-span-2 text-center py-3 text-text-muted text-[11px]">
+              데이터 로딩 실패
+            </div>
+          )}
         </div>
       </div>
 
       {/* Alert Feed */}
-      <div className="flex-1 overflow-y-auto px-4 py-3">
+      <div className="flex-1 overflow-y-auto px-3 py-3">
         <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
           최근 재난문자
         </h2>
         <div className="space-y-1.5">
           {disasters.isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-20" />
+            Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-16" />
             ))
           ) : disasters.data && disasters.data.length > 0 ? (
             disasters.data.slice(0, 20).map((alert) => {
@@ -157,29 +166,29 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               return (
                 <div
                   key={alert.id}
-                  className={`p-3 bg-bg-card rounded-md border border-border-default border-l-2 ${style.border}`}
+                  className={`p-2.5 bg-bg-card rounded border border-border-default border-l-2 ${style.border}`}
                 >
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${style.bg} ${style.text}`}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${style.bg} ${style.text}`}>
                       {alert.severity}
                     </span>
-                    <span className="text-[11px] text-text-muted truncate">
+                    <span className="text-[10px] text-text-muted truncate">
                       {alert.regionName}
                     </span>
                   </div>
-                  <p className="text-xs text-text-secondary leading-relaxed line-clamp-2">
+                  <p className="text-[12px] text-text-secondary leading-snug line-clamp-2">
                     {alert.message}
                   </p>
-                  <p className="text-[10px] text-text-muted mt-1.5">
+                  <p className="text-[10px] text-text-muted mt-1">
                     {formatDistanceToNow(new Date(alert.issuedAt), { addSuffix: true, locale: ko })}
                   </p>
                 </div>
               );
             })
           ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-text-muted">
-              <AlertTriangle size={24} className="mb-2 opacity-40" />
-              <p className="text-xs">재난문자 없음</p>
+            <div className="flex flex-col items-center justify-center py-6 text-text-muted">
+              <AlertTriangle size={20} className="mb-1.5 opacity-30" />
+              <p className="text-[11px]">재난문자 없음</p>
             </div>
           )}
         </div>
@@ -191,11 +200,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div
-      className="bg-bg-card rounded-md p-3 border border-border-default border-l-2"
+      className="bg-bg-card rounded p-2.5 border border-border-default border-l-2"
       style={{ borderLeftColor: color }}
     >
-      <p className="text-[11px] text-text-muted leading-tight">{label}</p>
-      <p className="text-xl font-semibold mt-1" style={{ color }}>
+      <p className="text-[10px] text-text-muted leading-tight">{label}</p>
+      <p className="text-lg font-semibold mt-0.5" style={{ color }}>
         {value}
       </p>
     </div>

@@ -7,9 +7,12 @@ interface LayerState {
     disaster: boolean;
     wildfire: boolean;
     weather: boolean;
+    regionBoundaries: boolean;
   };
+  selectedRegion: string | null;
   toggleLayer: (layer: keyof LayerState["layers"]) => void;
   setAllLayers: (visible: boolean) => void;
+  selectRegion: (regionId: string | null) => void;
 }
 
 export const useLayerStore = create<LayerState>((set) => ({
@@ -19,7 +22,9 @@ export const useLayerStore = create<LayerState>((set) => ({
     disaster: true,
     wildfire: true,
     weather: true,
+    regionBoundaries: true,
   },
+  selectedRegion: null,
   toggleLayer: (layer) =>
     set((state) => ({
       layers: { ...state.layers, [layer]: !state.layers[layer] },
@@ -32,6 +37,8 @@ export const useLayerStore = create<LayerState>((set) => ({
         disaster: visible,
         wildfire: visible,
         weather: visible,
+        regionBoundaries: visible,
       },
     })),
+  selectRegion: (regionId) => set({ selectedRegion: regionId }),
 }));
