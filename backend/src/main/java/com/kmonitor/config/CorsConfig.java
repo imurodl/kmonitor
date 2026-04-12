@@ -16,7 +16,8 @@ public class CorsConfig {
         var config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://kmonitor.imurodl.me"
         ));
         config.setAllowedMethods(List.of("GET", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
