@@ -70,13 +70,7 @@ export function DisasterAlertLayer({ data }: Props) {
           key={alert.id}
           position={Cartesian3.fromDegrees(lng, lat, 1000)}
           name={`재난문자 - ${alert.regionName}`}
-          description={`
-            <b>유형:</b> ${alert.category}<br/>
-            <b>심각도:</b> ${alert.severity}<br/>
-            <b>지역:</b> ${alert.regionName}<br/>
-            <b>내용:</b> ${alert.message}<br/>
-            <b>발송시간:</b> ${alert.issuedAt}
-          `}
+          description={JSON.stringify({ type: "disaster", data: alert })}
         >
           <BillboardGraphics
             image={getWarningIcon(alert.severity)}

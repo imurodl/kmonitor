@@ -14,13 +14,7 @@ export function WildfireLayer({ data }: Props) {
           key={fire.id}
           position={Cartesian3.fromDegrees(fire.longitude, fire.latitude)}
           name="산불 감지"
-          description={`
-            <b>위성:</b> ${fire.satellite}<br/>
-            <b>신뢰도:</b> ${fire.confidence ?? "N/A"}%<br/>
-            <b>밝기:</b> ${fire.brightness?.toFixed(1) ?? "N/A"} K<br/>
-            <b>FRP:</b> ${fire.frp?.toFixed(1) ?? "N/A"} MW<br/>
-            <b>감지시간:</b> ${fire.detectedAt}
-          `}
+          description={JSON.stringify({ type: "wildfire", data: fire })}
         >
           <PointGraphics
             pixelSize={12}

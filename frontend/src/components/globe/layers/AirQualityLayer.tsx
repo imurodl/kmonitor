@@ -25,14 +25,7 @@ export function AirQualityLayer({ data }: Props) {
             key={reading.id}
             position={Cartesian3.fromDegrees(reading.longitude, reading.latitude)}
             name={`${reading.stationName} 대기질`}
-            description={`
-              <b>측정소:</b> ${reading.stationName}<br/>
-              <b>PM2.5:</b> ${reading.pm25 ?? "N/A"} ug/m3<br/>
-              <b>PM10:</b> ${reading.pm10 ?? "N/A"} ug/m3<br/>
-              <b>등급:</b> ${reading.grade}<br/>
-              <b>통합지수:</b> ${reading.aqi ?? "N/A"}<br/>
-              <b>측정시간:</b> ${reading.measuredAt}
-            `}
+            description={JSON.stringify({ type: "airQuality", data: reading })}
           >
             <PointGraphics
               pixelSize={10}

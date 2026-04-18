@@ -28,15 +28,7 @@ export function WeatherLayer({ data }: Props) {
             key={obs.id}
             position={Cartesian3.fromDegrees(obs.longitude, obs.latitude, 500)}
             name={`${obs.stationName} 날씨`}
-            description={`
-              <b>도시:</b> ${obs.stationName}<br/>
-              <b>기온:</b> ${obs.temperature ?? "N/A"}°C<br/>
-              <b>습도:</b> ${obs.humidity ?? "N/A"}%<br/>
-              <b>풍속:</b> ${obs.windSpeed ?? "N/A"} m/s<br/>
-              <b>강수:</b> ${obs.precipitation ?? 0} mm<br/>
-              <b>상태:</b> ${obs.condition}<br/>
-              <b>관측시간:</b> ${obs.observedAt}
-            `}
+            description={JSON.stringify({ type: "weather", data: obs })}
           >
             <PointGraphics
               pixelSize={8}

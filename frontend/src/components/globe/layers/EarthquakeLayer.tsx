@@ -40,12 +40,7 @@ export function EarthquakeLayer({ data }: Props) {
             key={eq.id}
             position={Cartesian3.fromDegrees(eq.longitude, eq.latitude)}
             name={`지진 M${eq.magnitude || "?"}`}
-            description={`
-              <b>규모:</b> ${eq.magnitude || "N/A"}<br/>
-              <b>깊이:</b> ${eq.depth || "N/A"} km<br/>
-              <b>위치:</b> ${eq.locationName || "N/A"}<br/>
-              <b>시간:</b> ${eq.occurredAt}
-            `}
+            description={JSON.stringify({ type: "earthquake", data: eq })}
           >
             <EllipseGraphics
               semiMajorAxis={getMagnitudeRadius(eq.magnitude)}

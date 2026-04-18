@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { type Entity as CesiumEntity } from "cesium";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
@@ -6,8 +6,15 @@ import { DetailPanel } from "./DetailPanel";
 import { KoreaGlobe } from "../globe/KoreaGlobe";
 
 export function DashboardLayout() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => !window.matchMedia("(min-width: 768px)").matches);
   const [selectedEntity, setSelectedEntity] = useState<CesiumEntity | undefined>();
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const handler = (e: MediaQueryListEvent) => setSidebarCollapsed(!e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const handleEntitySelect = useCallback((entity: CesiumEntity | undefined) => {
     setSelectedEntity(entity);

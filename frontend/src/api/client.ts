@@ -89,4 +89,11 @@ export interface DashboardSummary {
   wildfires: { activeHotspots: number };
 }
 
+export type EntityMetadata =
+  | { type: "earthquake"; data: Earthquake }
+  | { type: "airQuality"; data: AirQualityReading }
+  | { type: "disaster"; data: DisasterAlert }
+  | { type: "wildfire"; data: Wildfire }
+  | { type: "weather"; data: WeatherObservation };
+
 export default client;

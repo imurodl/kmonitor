@@ -13,7 +13,6 @@ import { useLayerStore } from "../../stores/layerStore";
 import { useDashboardSummary, useDisasterAlerts } from "../../api/hooks";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
-import { RegionSelector } from "./RegionSelector";
 
 const LAYER_CONFIG = [
   { key: "earthquake" as const, label: "지진", icon: Activity, color: "#ef4444" },
@@ -57,7 +56,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           <button
             key={key}
             onClick={() => toggleLayer(key)}
-            className="p-2 rounded-md transition-colors hover:bg-bg-elevated"
+            className="p-2.5 rounded-md transition-colors hover:bg-bg-elevated"
             style={{ color: layers[key] ? color : "#4b5563" }}
             title={LAYER_CONFIG.find(l => l.key === key)?.label}
           >
@@ -73,7 +72,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Layer Toggles */}
       <div className="px-3 py-3 border-b border-border-default">
         <div className="flex items-center justify-between mb-2 px-1">
-          <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider">
+          <h2 className="text-[12px] font-medium text-text-muted uppercase tracking-wider">
             레이어
           </h2>
           <div className="flex items-center gap-1">
@@ -97,21 +96,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             <button
               key={key}
               onClick={() => toggleLayer(key)}
-              className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded text-[13px] transition-all ${
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded text-[13px] transition-all ${
                 layers[key]
                   ? "text-text-primary"
                   : "text-text-muted hover:text-text-secondary hover:bg-bg-elevated/50"
               }`}
               style={
                 layers[key]
-                  ? { backgroundColor: `${color}0d`, borderLeft: `2px solid ${color}` }
+                  ? { backgroundColor: `${color}15`, borderLeft: `2px solid ${color}` }
                   : { borderLeft: "2px solid transparent" }
               }
             >
-              <Icon size={14} style={{ color: layers[key] ? color : undefined }} />
+              <Icon size={16} style={{ color: layers[key] ? color : undefined }} />
               <span>{label}</span>
               <div
-                className="ml-auto w-1.5 h-1.5 rounded-full"
+                className="ml-auto w-2 h-2 rounded-full"
                 style={{ backgroundColor: layers[key] ? color : "#374151" }}
               />
             </button>
@@ -119,12 +118,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </div>
       </div>
 
-      {/* Region Selector */}
-      <RegionSelector />
-
       {/* Stats */}
       <div className="px-3 py-3 border-b border-border-default">
-        <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
+        <h2 className="text-[12px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
           현황
         </h2>
         <div className="grid grid-cols-2 gap-1.5">
@@ -152,7 +148,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Alert Feed */}
       <div className="flex-1 overflow-y-auto px-3 py-3">
-        <h2 className="text-[11px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
+        <h2 className="text-[12px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
           최근 재난문자
         </h2>
         <div className="space-y-1.5">
@@ -166,17 +162,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               return (
                 <div
                   key={alert.id}
-                  className={`p-2.5 bg-bg-card rounded border border-border-default border-l-2 ${style.border}`}
+                  className={`p-2.5 bg-bg-card rounded border border-border-default border-l-3 ${style.border}`}
                 >
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${style.bg} ${style.text}`}>
+                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${style.bg} ${style.text}`}>
                       {alert.severity}
                     </span>
-                    <span className="text-[10px] text-text-muted truncate">
+                    <span className="text-[11px] text-text-muted truncate">
                       {alert.regionName}
                     </span>
                   </div>
-                  <p className="text-[12px] text-text-secondary leading-snug line-clamp-2">
+                  <p className="text-[13px] text-text-secondary leading-snug line-clamp-2">
                     {alert.message}
                   </p>
                   <p className="text-[10px] text-text-muted mt-1">
@@ -200,11 +196,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div
-      className="bg-bg-card rounded p-2.5 border border-border-default border-l-2"
-      style={{ borderLeftColor: color }}
+      className="bg-bg-card rounded p-2.5 border border-border-default border-l-3"
+      style={{ borderLeftColor: color, backgroundColor: `${color}08` }}
     >
-      <p className="text-[10px] text-text-muted leading-tight">{label}</p>
-      <p className="text-lg font-semibold mt-0.5" style={{ color }}>
+      <p className="text-[11px] text-text-muted leading-tight">{label}</p>
+      <p className="text-2xl font-semibold mt-0.5 font-[family-name:var(--font-mono)]" style={{ color }}>
         {value}
       </p>
     </div>

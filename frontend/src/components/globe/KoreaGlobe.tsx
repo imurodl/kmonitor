@@ -86,6 +86,8 @@ export function KoreaGlobe({ onEntitySelect }: KoreaGlobeProps) {
   const wildfires = useWildfires();
   const weather = useWeather();
 
+  const isAnyLoading = earthquakes.isLoading || airQuality.isLoading || disasters.isLoading || wildfires.isLoading || weather.isLoading;
+
   const resetView = useCallback(() => {
     const viewer = viewerRef.current?.cesiumElement;
     if (!viewer) return;
@@ -226,6 +228,13 @@ export function KoreaGlobe({ onEntitySelect }: KoreaGlobeProps) {
         )}
       </Viewer>
 
+      {isAnyLoading && (
+        <div className="absolute top-3 left-3 z-30 flex items-center gap-2 bg-bg-surface/80 backdrop-blur-sm border border-border-default rounded-md px-3 py-1.5">
+          <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse" />
+          <span className="text-[11px] text-text-muted">데이터 로딩중...</span>
+        </div>
+      )}
+
       {/* Map Controls */}
       <div className="absolute bottom-4 right-4 z-30 flex flex-col gap-1">
         <button
@@ -233,27 +242,27 @@ export function KoreaGlobe({ onEntitySelect }: KoreaGlobeProps) {
             const v = viewerRef.current?.cesiumElement;
             if (v) v.camera.zoomIn(v.camera.positionCartographic.height * 0.4);
           }}
-          className="p-2 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
+          className="p-2.5 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
           title="확대"
         >
-          <Plus size={14} />
+          <Plus size={16} />
         </button>
         <button
           onClick={() => {
             const v = viewerRef.current?.cesiumElement;
             if (v) v.camera.zoomOut(v.camera.positionCartographic.height * 0.6);
           }}
-          className="p-2 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
+          className="p-2.5 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
           title="축소"
         >
-          <Minus size={14} />
+          <Minus size={16} />
         </button>
         <button
           onClick={resetView}
-          className="p-2 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
+          className="p-2.5 bg-bg-surface/90 backdrop-blur-sm border border-border-default rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors shadow-lg"
           title="전체 보기"
         >
-          <Home size={14} />
+          <Home size={16} />
         </button>
       </div>
     </>
