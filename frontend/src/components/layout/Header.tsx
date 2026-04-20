@@ -31,22 +31,31 @@ export function Header() {
   const isConnected = summary.data !== undefined && !summary.isError;
 
   return (
-    <header className="h-12 bg-bg-surface border-b border-border-default flex items-center justify-between px-4 shrink-0 z-10">
+    <header className="h-12 bg-bg-surface/90 backdrop-blur-md border-b border-border-default flex items-center justify-between px-4 shrink-0 z-10">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <Radio size={16} className="text-accent-blue" />
-          <span className="text-[13px] font-semibold text-text-primary tracking-wide font-[family-name:var(--font-mono)]">K-MONITOR</span>
+          <Radio size={15} className="text-chrome-accent" />
+          <span className="text-[14px] font-extrabold text-text-primary tracking-[0.08em]">
+            K-MONITOR
+          </span>
+          <span className="hidden md:inline text-[11px] text-text-muted tracking-wide ml-0.5">
+            한국 재난 상황
+          </span>
         </div>
         <RegionDropdown />
         {summary.data && (
           <div className="hidden sm:flex items-center gap-3 ml-2 pl-3 border-l border-border-default">
             <div className="flex items-center gap-1.5">
               <Activity size={12} className="text-accent-red" />
-              <span className="text-[11px] text-text-secondary font-[family-name:var(--font-mono)]">{summary.data.earthquakes.count24h}</span>
+              <span className="text-[11px] text-text-secondary tabular-nums font-[family-name:var(--font-mono)]">
+                {summary.data.earthquakes.count24h}
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
               <AlertTriangle size={12} className="text-accent-amber" />
-              <span className="text-[11px] text-text-secondary font-[family-name:var(--font-mono)]">{summary.data.disasters.activeAlerts}</span>
+              <span className="text-[11px] text-text-secondary tabular-nums font-[family-name:var(--font-mono)]">
+                {summary.data.disasters.activeAlerts}
+              </span>
             </div>
           </div>
         )}
@@ -54,15 +63,27 @@ export function Header() {
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5">
-          <span className={`inline-block w-1.5 h-1.5 rounded-full ${isConnected ? "bg-accent-green animate-pulse" : "bg-accent-red"}`} />
-          <span className={`text-[10px] uppercase tracking-wider font-[family-name:var(--font-mono)] ${isConnected ? "text-accent-green" : "text-accent-red"}`}>
+          <span
+            className={`inline-block w-1.5 h-1.5 rounded-full ${
+              isConnected ? "bg-accent-green animate-pulse" : "bg-accent-red"
+            }`}
+          />
+          <span
+            className={`text-[10px] font-medium uppercase tracking-[0.15em] ${
+              isConnected ? "text-accent-green" : "text-accent-red"
+            }`}
+          >
             {isConnected ? "SYS OK" : "OFFLINE"}
           </span>
         </div>
 
-        <div className="text-right">
-          <span className="text-[12px] text-text-primary tabular-nums font-[family-name:var(--font-mono)]">{kstTime}</span>
-          <span className="text-[10px] text-text-muted ml-2 hidden sm:inline">{kstDate}</span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-[13px] text-text-primary tabular-nums font-[family-name:var(--font-mono)]">
+            {kstTime}
+          </span>
+          <span className="text-[10px] text-text-muted hidden sm:inline">
+            {kstDate}
+          </span>
         </div>
       </div>
     </header>

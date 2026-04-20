@@ -1,32 +1,55 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-base: #0a0a0a;
-  --color-bg-surface: #141414;
-  --color-bg-elevated: #1a1a1a;
-  --color-bg-card: #111111;
-  --color-border-default: #2a2a2a;
-  --color-border-subtle: #1a1a1a;
-  --color-border-strong: #444444;
-  --color-text-primary: #e8e8e8;
-  --color-text-secondary: #cccccc;
-  --color-text-dim: #888888;
-  --color-text-muted: #666666;
-  --color-text-faint: #555555;
-  --color-accent-red: #ff4444;
-  --color-accent-orange: #ff8800;
-  --color-accent-amber: #ffaa00;
-  --color-accent-green: #44aa44;
-  --color-accent-blue: #3388ff;
-  --color-accent-teal: #0f5040;
-  --color-severity-critical-bg: #3b1111;
-  --color-severity-warning-bg: #3b2a11;
-  --color-severity-info-bg: #112244;
-  --color-severity-critical: #ff4444;
-  --color-severity-warning: #ff8800;
-  --color-severity-info: #3388ff;
-  --color-glow-blue: rgba(51, 136, 255, 0.15);
-  --font-mono: 'SF Mono', 'Monaco', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+  /* Surfaces — deep navy for depth, not flat black */
+  --color-bg-base: #0a1020;
+  --color-bg-surface: #121828;
+  --color-bg-elevated: #1a2236;
+  --color-bg-card: #0e1526;
+
+  --color-border-default: #2a3449;
+  --color-border-subtle: #1a2236;
+  --color-border-strong: #415070;
+
+  --color-text-primary: #e8ecf5;
+  --color-text-secondary: #c3c9d6;
+  --color-text-dim: #8a93a6;
+  --color-text-muted: #6a7388;
+  --color-text-faint: #4a5168;
+
+  /* Chrome accent — signal amber, used on interactive UI only (never data) */
+  --color-chrome-accent: #eab658;
+  --color-chrome-accent-weak: rgba(234, 182, 88, 0.12);
+
+  /* Data accents — reserved for map markers + severity badges */
+  --color-accent-red: #ef4444;
+  --color-accent-amber: #f59e0b;
+  --color-accent-green: #22c55e;
+  --color-accent-blue: #3b82f6;
+
+  /* Severity — Korean AQI tiers (좋음 / 보통 / 나쁨 / 매우나쁨) */
+  --color-severity-good: #3b82f6;
+  --color-severity-moderate: #22c55e;
+  --color-severity-unhealthy: #f59e0b;
+  --color-severity-hazardous: #ef4444;
+
+  /* Legacy severity (alert feed, DetailPanel badges) */
+  --color-severity-critical: #ef4444;
+  --color-severity-warning: #f59e0b;
+  --color-severity-info: #3b82f6;
+  --color-severity-critical-bg: #2a1212;
+  --color-severity-warning-bg: #2a1f10;
+  --color-severity-info-bg: #0f1a33;
+
+  /* Typography */
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", "Segoe UI", system-ui, sans-serif;
+  --font-display:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
+  --font-mono:
+    "JetBrains Mono", "SF Mono", Monaco, "Cascadia Code", Consolas, monospace;
 }
 
 * {
@@ -35,10 +58,20 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 body {
-  background: var(--color-bg-base);
+  background-color: var(--color-bg-base);
+  /* Subtle noise grain — ~4% opacity, adds depth without visible noise */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   color: var(--color-text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', system-ui, sans-serif;
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01" on, "cv11" on;
+  letter-spacing: -0.01em;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
@@ -49,36 +82,57 @@ body {
   width: 100vw;
 }
 
-/* Cesium overrides */
-.cesium-viewer-bottom,
+/* Korean needs neutral tracking — Latin tightens but Hangul shouldn't */
+:lang(ko) {
+  letter-spacing: 0;
+}
+
+/* Cesium chrome — hide timeline/animation UI, keep attribution visible */
 .cesium-viewer-animationContainer,
 .cesium-viewer-timelineContainer,
-.cesium-viewer-fullscreenContainer {
+.cesium-viewer-fullscreenContainer,
+.cesium-viewer-toolbar,
+.cesium-navigation-help,
+.cesium-infoBox {
   display: none !important;
+}
+
+/* Attribution pill — bottom-right, always visible (Google 3D Tiles / Ion ToS) */
+.cesium-viewer-bottom {
+  left: auto !important;
+  right: 12px !important;
+  bottom: 60px !important; /* above legend strip (48px + gap) */
+  pointer-events: auto;
 }
 
 .cesium-widget-credits {
   font-size: 10px !important;
-  opacity: 0.5;
+  padding: 4px 8px !important;
+  background: rgba(10, 16, 32, 0.8) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border-default);
+  border-radius: 4px;
+  color: var(--color-text-dim) !important;
+  line-height: 1.4 !important;
 }
 
-.cesium-infoBox,
-.cesium-viewer-toolbar,
-.cesium-navigation-help {
-  display: none !important;
+.cesium-widget-credits a {
+  color: var(--color-text-secondary) !important;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: var(--color-border-default);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: var(--color-border-strong);
 }

@@ -23,7 +23,7 @@ const SEVERITY_COLORS: Record<string, string> = {
 const GRADE_COLORS: Record<string, string> = {
   "좋음": "text-accent-green",
   "보통": "text-accent-amber",
-  "나쁨": "text-accent-orange",
+  "나쁨": "text-accent-amber",
   "매우나쁨": "text-accent-red",
 };
 
@@ -132,7 +132,7 @@ export function DetailPanel({ entity, onClose }: Props) {
       <div className="bg-bg-surface/95 backdrop-blur-md border border-border-default rounded-lg shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-3 py-2.5 border-b border-border-default bg-bg-elevated/50">
           <div className="flex items-center gap-2 min-w-0">
-            <MapPin size={14} className="text-accent-blue shrink-0" />
+            <MapPin size={14} className="text-chrome-accent shrink-0" />
             <h3 className="text-[13px] font-semibold text-text-primary truncate">
               {name}
             </h3>

@@ -13,13 +13,14 @@ import { useLayerStore } from "../../stores/layerStore";
 import { useDashboardSummary, useDisasterAlerts } from "../../api/hooks";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { LAYER_COLOR } from "../../lib/layerTheme";
 
 const LAYER_CONFIG = [
-  { key: "earthquake" as const, label: "지진", icon: Activity, color: "#ef4444" },
-  { key: "airQuality" as const, label: "대기질", icon: Wind, color: "#22c55e" },
-  { key: "disaster" as const, label: "재난문자", icon: AlertTriangle, color: "#f59e0b" },
-  { key: "wildfire" as const, label: "산불", icon: Flame, color: "#ff6b35" },
-  { key: "weather" as const, label: "날씨", icon: Cloud, color: "#60a5fa" },
+  { key: "earthquake" as const, label: "지진", icon: Activity, color: LAYER_COLOR.earthquake },
+  { key: "airQuality" as const, label: "대기질", icon: Wind, color: LAYER_COLOR.airQuality },
+  { key: "disaster" as const, label: "재난문자", icon: AlertTriangle, color: LAYER_COLOR.disaster },
+  { key: "wildfire" as const, label: "산불", icon: Flame, color: LAYER_COLOR.wildfire },
+  { key: "weather" as const, label: "날씨", icon: Cloud, color: LAYER_COLOR.weather },
 ];
 
 const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
@@ -27,6 +28,8 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
   WARNING: { bg: "bg-severity-warning-bg", text: "text-severity-warning", border: "border-l-accent-amber" },
   INFO: { bg: "bg-severity-info-bg", text: "text-severity-info", border: "border-l-accent-blue" },
 };
+
+const STALE_AFTER_MS = 5 * 60 * 1000;
 
 function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse rounded bg-border-default ${className}`} />;
@@ -42,6 +45,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const summary = useDashboardSummary();
   const disasters = useDisasterAlerts();
   const allOn = Object.values(layers).every(Boolean);
+
+  const updatedAt = summary.dataUpdatedAt || 0;
+  const freshnessAge = updatedAt ? Date.now() - updatedAt : Infinity;
+  const isLive = freshnessAge < STALE_AFTER_MS;
 
   if (collapsed) {
     return (
@@ -120,9 +127,23 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Stats */}
       <div className="px-3 py-3 border-b border-border-default">
-        <h2 className="text-[12px] font-medium text-text-muted uppercase tracking-wider mb-2 px-1">
-          현황
-        </h2>
+        <div className="flex items-center justify-between mb-2 px-1">
+          <h2 className="text-[12px] font-medium text-text-muted uppercase tracking-wider">
+            현황
+          </h2>
+          {updatedAt > 0 && (
+            <div className="flex items-center gap-1.5" title={new Date(updatedAt).toLocaleString("ko-KR")}>
+              <span
+                className={`inline-block w-1.5 h-1.5 rounded-full ${
+                  isLive ? "bg-accent-green animate-pulse" : "bg-accent-red"
+                }`}
+              />
+              <span className="text-[10px] text-text-muted">
+                {formatDistanceToNow(updatedAt, { addSuffix: true, locale: ko })}
+              </span>
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-2 gap-1.5">
           {summary.isLoading ? (
             <>
@@ -133,10 +154,30 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             </>
           ) : summary.data ? (
             <>
-              <StatCard label="지진 (24h)" value={summary.data.earthquakes.count24h} color="#ef4444" />
-              <StatCard label="재난문자" value={summary.data.disasters.activeAlerts} color="#f59e0b" />
-              <StatCard label="대기질" value={summary.data.airQuality.stationsReporting} color="#22c55e" />
-              <StatCard label="산불" value={summary.data.wildfires.activeHotspots} color="#ff6b35" />
+              <StatCard
+                label="지진"
+                unit="24h"
+                value={summary.data.earthquakes.count24h}
+                color={LAYER_COLOR.earthquake}
+              />
+              <StatCard
+                label="재난문자"
+                unit="활성"
+                value={summary.data.disasters.activeAlerts}
+                color={LAYER_COLOR.disaster}
+              />
+              <StatCard
+                label="대기질"
+                unit="측정소"
+                value={summary.data.airQuality.stationsReporting}
+                color={LAYER_COLOR.airQuality}
+              />
+              <StatCard
+                label="산불"
+                unit="감지"
+                value={summary.data.wildfires.activeHotspots}
+                color={LAYER_COLOR.wildfire}
+              />
             </>
           ) : (
             <div className="col-span-2 text-center py-3 text-text-muted text-[11px]">
@@ -193,14 +234,30 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   );
 }
 
-function StatCard({ label, value, color }: { label: string; value: number; color: string }) {
+function StatCard({
+  label,
+  unit,
+  value,
+  color,
+}: {
+  label: string;
+  unit: string;
+  value: number;
+  color: string;
+}) {
   return (
     <div
       className="bg-bg-card rounded p-2.5 border border-border-default border-l-3"
       style={{ borderLeftColor: color, backgroundColor: `${color}08` }}
     >
-      <p className="text-[11px] text-text-muted leading-tight">{label}</p>
-      <p className="text-2xl font-semibold mt-0.5 font-[family-name:var(--font-mono)]" style={{ color }}>
+      <div className="flex items-baseline gap-1.5">
+        <p className="text-[11px] text-text-muted leading-tight">{label}</p>
+        <p className="text-[9px] text-text-faint uppercase tracking-wider">{unit}</p>
+      </div>
+      <p
+        className="text-2xl font-semibold mt-0.5 tabular-nums font-[family-name:var(--font-mono)]"
+        style={{ color }}
+      >
         {value}
       </p>
     </div>
