@@ -47,11 +47,14 @@ export function RegionBoundaryLayer() {
 
     let ds: GeoJsonDataSource;
 
+    const UNSELECTED_FILL = Color.fromBytes(65, 80, 112).withAlpha(0.0);
+    const UNSELECTED_STROKE = Color.fromBytes(65, 80, 112).withAlpha(0.18);
+
     (async () => {
       ds = await GeoJsonDataSource.load(GEOJSON_URL, {
-        fill: Color.CYAN.withAlpha(0.03),
-        stroke: Color.CYAN.withAlpha(0.3),
-        strokeWidth: 1.5,
+        fill: UNSELECTED_FILL,
+        stroke: UNSELECTED_STROKE,
+        strokeWidth: 1,
       });
 
       dsRef.current = ds;
@@ -108,15 +111,17 @@ export function RegionBoundaryLayer() {
     const ds = dsRef.current;
     if (!ds) return;
 
+    // Chrome accent (signal amber) for the selected region, faint slate for the rest.
+    const CHROME_FILL = Color.fromBytes(234, 182, 88).withAlpha(0.14);
+    const CHROME_STROKE = Color.fromBytes(234, 182, 88).withAlpha(0.85);
+    const IDLE_FILL = Color.fromBytes(65, 80, 112).withAlpha(0.0);
+    const IDLE_STROKE = Color.fromBytes(65, 80, 112).withAlpha(0.18);
+
     ds.entities.values.forEach((entity: CesiumEntity) => {
       const isSelected = entity.name === selectedRegion;
       if (entity.polygon) {
-        entity.polygon.material = isSelected
-          ? Color.CYAN.withAlpha(0.12) as any
-          : Color.CYAN.withAlpha(0.03) as any;
-        entity.polygon.outlineColor = isSelected
-          ? Color.CYAN.withAlpha(0.7) as any
-          : Color.CYAN.withAlpha(0.3) as any;
+        entity.polygon.material = (isSelected ? CHROME_FILL : IDLE_FILL) as any;
+        entity.polygon.outlineColor = (isSelected ? CHROME_STROKE : IDLE_STROKE) as any;
       }
     });
   }, [selectedRegion]);

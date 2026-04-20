@@ -3,6 +3,7 @@ import { type Entity as CesiumEntity } from "cesium";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { DetailPanel } from "./DetailPanel";
+import { LegendStrip } from "./LegendStrip";
 import { KoreaGlobe } from "../globe/KoreaGlobe";
 
 export function DashboardLayout() {
@@ -36,6 +37,7 @@ export function DashboardLayout() {
               onClose={() => setSelectedEntity(undefined)}
             />
           )}
+          <LegendStrip />
         </div>
       </div>
     </div>

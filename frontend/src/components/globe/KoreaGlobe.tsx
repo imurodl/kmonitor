@@ -230,13 +230,13 @@ export function KoreaGlobe({ onEntitySelect }: KoreaGlobeProps) {
 
       {isAnyLoading && (
         <div className="absolute top-3 left-3 z-30 flex items-center gap-2 bg-bg-surface/80 backdrop-blur-sm border border-border-default rounded-md px-3 py-1.5">
-          <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse" />
+          <div className="w-2 h-2 bg-chrome-accent rounded-full animate-pulse" />
           <span className="text-[11px] text-text-muted">데이터 로딩중...</span>
         </div>
       )}
 
-      {/* Map Controls */}
-      <div className="absolute bottom-4 right-4 z-30 flex flex-col gap-1">
+      {/* Map Controls — positioned above legend strip (48px) + attribution (28px) */}
+      <div className="absolute bottom-[96px] right-3 z-30 flex flex-col gap-1">
         <button
           onClick={() => {
             const v = viewerRef.current?.cesiumElement;

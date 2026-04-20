@@ -32,7 +32,7 @@ export function RegionDropdown() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-[12px] text-accent-blue border border-accent-blue/30 bg-accent-blue/10 px-2 py-0.5 rounded hover:bg-accent-blue/20 transition-colors"
+        className="flex items-center gap-1.5 text-[12px] text-chrome-accent border border-chrome-accent/30 bg-chrome-accent/10 px-2 py-0.5 rounded hover:bg-chrome-accent/20 transition-colors"
       >
         <MapPin size={11} />
         <span>{regionName}</span>
@@ -45,7 +45,7 @@ export function RegionDropdown() {
             onClick={() => handleSelect(null)}
             className={`w-full text-left px-3 py-1.5 text-[12px] transition-colors ${
               selectedRegion === null
-                ? "text-accent-blue bg-accent-blue/10"
+                ? "text-chrome-accent bg-chrome-accent/10"
                 : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
             }`}
           >
@@ -57,7 +57,7 @@ export function RegionDropdown() {
               onClick={() => handleSelect(region.id)}
               className={`w-full text-left px-3 py-1.5 text-[12px] transition-colors ${
                 selectedRegion === region.id
-                  ? "text-accent-blue bg-accent-blue/10"
+                  ? "text-chrome-accent bg-chrome-accent/10"
                   : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
               }`}
             >
